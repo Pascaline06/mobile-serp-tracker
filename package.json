@@ -1,9 +1,10 @@
- "name": "mobile-serp-tracker",
+{
+  "name": "mobile-serp-tracker",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsx index.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,4 +26,3 @@
     "typescript": "^6.0.3"
   }
 }
-~/mobile-serp-tracker $
