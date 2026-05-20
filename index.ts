@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const app = new Hono();
 
-const SERPAPI_KEY = '9ef797730a31a3467d0ce4d2c1968300b08d5b0b7655199512ea98ce03f5e224';
+const SERPAPI_KEY = process.env.SERPAPI_KEY;
 
 app.get('/', (c) => {
   return c.text("Mobile SERP Tracker API\nusage: '/api/serp?q=pizza&country=US'");
