@@ -1,2 +1,33 @@
 # mobile-serp-tracker
 Mobile SERP Tracker API - Built on Android/Termux
+Mobile search results API built entirely on Android phone using Termux.
+
+## Features
+- ✅ Mobile device simulation
+- ✅ Proxy support
+- ✅ Clean REST API
+- ✅ Real Google mobile results via SerpAPI
+
+## Setup
+```bash
+npm install
+npx tsx index.ts
+```
+
+## Usage
+```bash
+curl "http://localhost:3000/api/serp?q=pizza&country=US"
+```
+
+## API Endpoints
+
+**Search:**
+**Health:**
+## Tech Stack
+- Hono (Node.js framework)
+- TypeScript
+- SerpAPI
+- Axios
+
+Built for Proxies.sx Marketplace Bounty ($50 Wave 2)
+~/mobile-serp-tracker $
