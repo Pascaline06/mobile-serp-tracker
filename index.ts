@@ -4,16 +4,29 @@ import axios from 'axios';
 
 const app = new Hono();
 
+// Environment variable (important for Railway)
 const SERPAPI_KEY = process.env.SERPAPI_KEY;
 
+if (!SERPAPI_KEY) {
+  console.error("❌ Missing SERPAPI_KEY environment variable");
+}
+
+// Root route
 app.get('/', (c) => {
-  return c.text("Mobile SERP Tracker API\nusage: '/api/serp?q=pizza&country=US'");
+  return c.text(
+    "Mobile SERP Tracker API\nUsage: /api/serp?q=pizza&country=US"
+  );
 });
 
+// Health check route (useful for Railway)
 app.get('/health', (c) => {
-  return c.json({ status: 'ok', timestamp: new Date().toISOString() });
+  return c.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+  });
 });
 
+// SERP API endpoint
 app.get('/api/serp', async (c) => {
   try {
     const query = c.req.query('q');
@@ -23,56 +36,61 @@ app.get('/api/serp', async (c) => {
       return c.json({ error: 'Missing query parameter "q"' }, 400);
     }
 
+    if (!SERPAPI_KEY) {
+      return c.json({ error: 'Server misconfigured: missing API key' }, 500);
+    }
+
     console.log('🔍 Searching:', query);
-    console.log('📱 Using SerpAPI...');
 
-    const serpApiUrl = 'https://serpapi.com/search';
-
-    const response = await axios.get(serpApiUrl, {
+    const response = await axios.get('https://serpapi.com/search', {
       params: {
         engine: 'google',
         q: query,
-        gl: country.toLowerCase(), // Google country code (us, ng, uk, etc)
+        gl: country.toLowerCase(),
         device: 'mobile',
-        api_key: SERPAPI_KEY
+        api_key: SERPAPI_KEY,
       },
-      timeout: 30000
+      timeout: 30000,
     });
 
-    console.log('✅ Got results from SerpAPI');
-
     const data = response.data;
+
     const results = (data.organic_results || []).map((result: any) => ({
       title: result.title,
       url: result.link,
       snippet: result.snippet || '',
-      position: result.position
+      position: result.position,
     }));
 
-    console.log('✅ Found', results.length, 'results');
+    console.log(`✅ Found ${results.length} results`);
 
     return c.json({
       query,
       country: country.toUpperCase(),
       source: 'Google Mobile (via SerpAPI)',
       timestamp: new Date().toISOString(),
-      results
+      results,
     });
 
   } catch (error: any) {
     console.error('❌ Error:', error.message);
-    return c.json({
-      error: error.message,
-      details: error.response?.data || 'No details'
-    }, 500);
+
+    return c.json(
+      {
+        error: error.message,
+        details: error.response?.data || 'No additional details',
+      },
+      500
+    );
   }
 });
 
-const port = 3000;
-console.log(`🚀 Server starting on port ${port}`);
+// IMPORTANT: Railway uses dynamic PORT
+const port = Number(process.env.PORT);
 
 serve({
   fetch: app.fetch,
-  port
+  port,
 });
-~/mobile-serp-tracker $
+
+console.log(`🚀 Server running on port ${port}`);
