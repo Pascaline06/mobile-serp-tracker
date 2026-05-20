@@ -86,7 +86,7 @@ app.get('/api/serp', async (c) => {
 });
 
 // IMPORTANT: Railway uses dynamic PORT
-const port = Number(process.env.PORT);
+const port = Number(process.env.PORT) || 3000;
 
 serve({
   fetch: app.fetch,
