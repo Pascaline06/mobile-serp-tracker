@@ -8,6 +8,22 @@ Mobile search results API built entirely on Android phone using Termux.
 - ✅ Clean REST API
 - ✅ Real Google mobile results via SerpAPI
 
+## 🌐 Live Deployment
+
+**Deployment URL:**  
+https://mobile-serp-tracker.onrender.com/
+
+**Health Check:**  
+https://mobile-serp-tracker.onrender.com/health
+
+**Example API Call:**  
+https://mobile-serp-tracker.onrender.com/api/serp?q=pizza&country=US
+
+---
+
+## 📌 About This Service
+
+This service provides mobile Google SERP tracking using Hono + SerpAPI. It supports country-based mobile search queries and returns structured organic search results through a public API endpoint.
 ## Setup
 ```bash
 npm install
