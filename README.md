@@ -21,6 +21,19 @@ https://mobile-serp-tracker.onrender.com/api/serp?q=pizza&country=US
 
 ---
 
+## x402 Payment Support
+
+This API includes x402-compatible USDC payment-gated endpoints.
+
+Protected Endpoint:
+`/api/premium-serp`
+
+Network:
+`Base Sepolia`
+
+Payment Standard:
+`x402`
+
 ## 📌 About This Service
 
 This service provides mobile Google SERP tracking using Hono + SerpAPI. It supports country-based mobile search queries and returns structured organic search results through a public API endpoint.
