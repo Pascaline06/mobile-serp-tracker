@@ -1,96 +1,78 @@
-import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
 import axios from 'axios';
+import * as cheerio from 'cheerio';
+import { paymentMiddleware } from "@x402/hono";
 
 const app = new Hono();
 
-// Environment variable (important for Railway)
-const SERPAPI_KEY = process.env.SERPAPI_KEY;
+const PROXIES_API_KEY = process.env.PROXIES_API_KEY || '';
 
-if (!SERPAPI_KEY) {
-  console.error("❌ Missing SERPAPI_KEY environment variable");
-}
+app.use(
+  "/api/premium-serp",
+  paymentMiddleware({
+    "GET /api/premium-serp": {
+      price: "$0.01",
+      network: "base-sepolia",
+      config: {
+        description: "Premium mobile SERP tracking endpoint",
+        payTo: process.env.WALLET_ADDRESS!,
+      },
+    },
+  })
+);
 
-// Root route
 app.get('/', (c) => {
-  return c.text(
-    "Mobile SERP Tracker API\nUsage: /api/serp?q=pizza&country=US"
-  );
-});
-
-// Health check route (useful for Railway)
-app.get('/health', (c) => {
   return c.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
+    status: '✅ Online',
+    version: '1.0',
+    usage: '/api/serp?q=pizza&country=US'
   });
 });
 
-// SERP API endpoint
 app.get('/api/serp', async (c) => {
   try {
     const query = c.req.query('q');
-    const country = c.req.query('country') || 'us';
+    const country = c.req.query('country') || 'US';
 
     if (!query) {
-      return c.json({ error: 'Missing query parameter "q"' }, 400);
+      return c.json({ error: 'Missing query' }, 400);
     }
 
-    if (!SERPAPI_KEY) {
-      return c.json({ error: 'Server misconfigured: missing API key' }, 500);
+    if (!PROXIES_API_KEY) {
+      return c.json({ error: 'API key not set' }, 500);
     }
 
-    console.log('🔍 Searching:', query);
-
-    const response = await axios.get('https://serpapi.com/search', {
-      params: {
-        engine: 'google',
-        q: query,
-        gl: country.toLowerCase(),
-        device: 'mobile',
-        api_key: SERPAPI_KEY,
-      },
-      timeout: 30000,
-    });
-
-    const data = response.data;
-
-    const results = (data.organic_results || []).map((result: any) => ({
-      title: result.title,
-      url: result.link,
-      snippet: result.snippet || '',
-      position: result.position,
-    }));
-
-    console.log(`✅ Found ${results.length} results`);
+    console.log(`🔍 Searching: "${query}"`);
 
     return c.json({
+      success: true,
       query,
-      country: country.toUpperCase(),
-      source: 'Google Mobile (via SerpAPI)',
-      timestamp: new Date().toISOString(),
-      results,
+      country,
+      type: "free endpoint"
     });
 
   } catch (error: any) {
-    console.error('❌ Error:', error.message);
-
-    return c.json(
-      {
-        error: error.message,
-        details: error.response?.data || 'No additional details',
-      },
-      500
-    );
+    return c.json({
+      error: error.message || 'Unknown error'
+    }, 500);
   }
 });
 
-// IMPORTANT: Railway uses dynamic PORT
-const port = Number(process.env.PORT) || 3000;
+app.get("/api/premium-serp", async (c) => {
+  const query = c.req.query("q");
+
+  return c.json({
+    success: true,
+    premium: true,
+    query,
+    message: "x402 protected premium endpoint",
+  });
+});
 
 serve({
   fetch: app.fetch,
-  port,
+  port: Number(process.env.PORT) || 3000
 });
 
-console.log(`🚀 Server running on port ${port}`);
+console.log("🚀 Server running");
