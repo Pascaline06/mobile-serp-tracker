@@ -10,20 +10,22 @@ Mobile search results API built entirely on Android phone using Termux.
 
 ## 🌐 Live Deployment
 
-**Deployment URL:**  
-https://mobile-serp-tracker.onrender.com/
-
 **Health Check:**  
 https://mobile-serp-tracker.onrender.com/health
 
-**Example API Call:**  
-https://mobile-serp-tracker.onrender.com/api/serp?q=pizza&country=US
+## Live Deployment
 
----
+https://mobile-serp-tracker.onrender.com/
 
-## x402 Payment Support
+## API Endpoints
 
-This API includes x402-compatible USDC payment-gated endpoints.
+### Free SERP Endpoint
+`/api/serp?q=keyword&country=US`
+
+### Premium Endpoint
+`/api/premium-serp?q=keyword`
+
+Designed for x402-compatible USDC payment-gated access on Base Sepolia.
 
 Protected Endpoint:
 `/api/premium-serp`
