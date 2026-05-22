@@ -2,25 +2,11 @@ import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { paymentMiddleware } from "@x402/hono";
 
 const app = new Hono();
 
 const PROXIES_API_KEY = process.env.PROXIES_API_KEY || '';
 
-app.use(
-  "/api/premium-serp",
-  paymentMiddleware({
-    "GET /api/premium-serp": {
-      price: "$0.01",
-      network: "base-sepolia",
-      config: {
-        description: "Premium mobile SERP tracking endpoint",
-        payTo: process.env.WALLET_ADDRESS!,
-      },
-    },
-  })
-);
 
 app.get('/', (c) => {
   return c.json({
